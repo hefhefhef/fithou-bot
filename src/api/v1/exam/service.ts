@@ -88,7 +88,6 @@ const isExamTomorrow = (exam: ExamType, d: Date) => {
   try {
     const dateOfExam = new Date(convertDate(exam.ExamTime.split(' ')[1]));
     const numberOfDate = calculateTheNumberOfDaysBetweenTwoDates(dateOfExam, d);
-    console.log('numberOfDate', numberOfDate);
 
     return numberOfDate === 1;
   } catch (error) {
