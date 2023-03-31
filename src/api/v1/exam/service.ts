@@ -48,15 +48,18 @@ const sendMessageIfChanged = async (
     let IS_SHOULD_UPDATE = false;
     const foundMissing = examDayData.dataSent.find((item) => item.ExamSubject === exam.ExamSubject);
     if (!foundMissing) {
-      await sendMessage(input?.subscribedID, { text: message('Bạn có lịch thi 🥰', exam) });
+      sendMessage(input.subscribedID, { text: message('Bạn có lịch thi 🥰', exam) });
       logger.warn(`User ${input.username} has a exam! ${new Date()}`);
     }
 
     const hasChanged = examDayData.dataSent.find(
-      (item) => item.ExamSubject === exam.ExamSubject && item.ExamTime !== exam.ExamTime
+      (item) =>
+        item.ExamSubject === exam.ExamSubject &&
+        item.ExamTime !== exam.ExamTime &&
+        item.OrdinalNumbers === exam.OrdinalNumbers
     );
     if (hasChanged) {
-      await sendMessage(input?.subscribedID, { text: message('Lịch thi của bạn đã thay đổi 😎', exam) });
+      sendMessage(input.subscribedID, { text: message('Lịch thi của bạn đã thay đổi 😎', exam) });
       IS_SHOULD_UPDATE = true;
       logger.warn(`User ${input.username} exam has been changed! ${new Date()}`);
     }
@@ -65,7 +68,7 @@ const sendMessageIfChanged = async (
       (item) => item.ExamSubject === exam.ExamSubject && item.ExamRoom !== exam.ExamRoom
     );
     if (hasChangedRoom) {
-      await sendMessage(input?.subscribedID, { text: message('Phòng thi của bạn đã thay đổi 😜', exam) });
+      sendMessage(input.subscribedID, { text: message('Phòng thi của bạn đã thay đổi 😜', exam) });
       IS_SHOULD_UPDATE = true;
       logger.warn(`User ${input.username} exam room has been changed! ${new Date()}`);
     }
@@ -100,7 +103,7 @@ export const fetchUpcomingExamSchedule = async (input: FetchUpcomingExamSchedule
     const { examDayResponse, examDayData } = await fetchExamData(input);
 
     if (examDayResponse?.isExpired) {
-      await sendMessage(input?.subscribedID, {
+      sendMessage(input.subscribedID, {
         text: 'Tài khoản CTMS của bạn đã hết hạn, vui lòng gửi mail theo hướng dẫn để dùng tiếp dịch vụ nha!🥲',
       });
       logger.warn(`User ${input.username} is expired!`);
@@ -115,7 +118,7 @@ export const fetchUpcomingExamSchedule = async (input: FetchUpcomingExamSchedule
 
     if (!examDayData) {
       for (let i = 0; i < examDayResponse?.data?.length; i++) {
-        await sendMessage(input?.subscribedID, {
+        sendMessage(input.subscribedID, {
           text: message('Bạn có lịch thi 🥰', examDayResponse?.data[i]),
         });
         logger.warn(`User ${input.username} has a exam! ${new Date()}`);
@@ -129,7 +132,7 @@ export const fetchUpcomingExamSchedule = async (input: FetchUpcomingExamSchedule
 
       const check = isExamTomorrow(examDayResponse?.data[i], today);
       if (check) {
-        await sendMessage(input?.subscribedID, {
+        sendMessage(input.subscribedID, {
           text: message('Bạn có lịch thi ngày mai 😝', examDayResponse?.data[i]),
         });
         logger.warn(`User ${input.username} exam tomorrow ${new Date()}`);

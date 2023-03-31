@@ -8,12 +8,13 @@ export const examDaySchedule = async () => {
     const users: User[] = await UserModel.find({ isExamDay: true });
 
     for (const user of users) {
-      await fetchUpcomingExamSchedule({
+      fetchUpcomingExamSchedule({
         username: user.username,
         password: user.password,
         subscribedID: user.subscribedID,
       });
     }
+    logger.info(`examDaySchedule is running at ${new Date()}`);
   } catch (error) {
     logger.error(error);
   }
