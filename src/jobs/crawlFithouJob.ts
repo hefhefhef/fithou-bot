@@ -1,36 +1,76 @@
+/* eslint-disable @typescript-eslint/no-loop-func */
 import logger from 'logger';
-import { ArticlesModel } from 'models';
-import { sendMessage } from 'services/facebook';
 import { crawlFithouService } from 'services/fithou';
-import { CRAWL_FITHOU_TYPE } from 'utils/constants';
+import { workerTs } from 'workers';
+import { Worker } from 'worker_threads';
+import path from 'path';
+import { createPool } from 'generic-pool';
+
+const workerPath = path.join(__dirname, '../workers/newsHunter.ts');
 
 export const crawlFithouJob = async () => {
-  const result: any = crawlFithouService();
-  const oldArticles = ArticlesModel.findOne();
+  const result = await crawlFithouService();
 
-  const resolveAll = await Promise.all([result, oldArticles]);
+  const subscribers = result.subscribedIDs;
 
-  const subscribers = resolveAll[1] && resolveAll[1].toObject().subscribedIDs;
-
-  if (!resolveAll[0]?.data || !subscribers) {
+  if (!result?.data) {
     logger.warn(`There is not an article in the db`);
     return;
   }
 
-  if (resolveAll[0]?.type === CRAWL_FITHOU_TYPE.oneRecord || resolveAll[0]?.type === CRAWL_FITHOU_TYPE.new) {
-    for (const element of subscribers) {
-      sendMessage(element, {
-        text: `${resolveAll[0]?.data?.title} \n ${resolveAll[0]?.data?.link}`,
+  if (result.code === 'ONE_NEW_ARTICLE') {
+    for (const userId of subscribers) {
+      const workerFactory: any = {
+        create: () => workerTs(workerPath, { workerData: { userId: userId, data: result.data } }),
+        destroy: (worker: any) => worker.terminate(),
+      };
+
+      const pool = createPool(workerFactory, { max: 4 });
+      const worker = (await pool.acquire()) as Worker;
+
+      worker.on('message', function (message: any) {
+        console.log(message);
+        pool.release(worker);
       });
+
+      worker.on('error', (error: any) => {
+        console.error(`Lỗi từ worker cho ${userId}:`, error);
+        pool.release(worker);
+      });
+
+      await pool.drain();
+      await pool.clear();
     }
   }
 
-  if (resolveAll[0]?.type === CRAWL_FITHOU_TYPE.manyRecords) {
-    for (const element of subscribers) {
-      for (let j = 0; j < resolveAll[0]?.data?.length; j++) {
-        sendMessage(element, {
-          text: `${resolveAll[0]?.data[j]?.title} \n ${resolveAll[0]?.data[j]?.link}`,
-        });
+  if (result.code === 'MANY_NEW_ARTICLES') {
+    if (Array.isArray(result.data)) {
+      for (const userId of subscribers) {
+        for (let j = 0; j < result.data?.length; j++) {
+          const workerFactory: any = {
+            create: () =>
+              workerTs(workerPath, {
+                workerData: { userId: userId, data: Array.isArray(result.data) && result.data[j] },
+              }),
+            destroy: (worker: any) => worker.terminate(),
+          };
+
+          const pool = createPool(workerFactory, { max: 4 });
+          const worker = (await pool.acquire()) as Worker;
+
+          worker.on('message', function (message: any) {
+            console.log(message);
+            pool.release(worker);
+          });
+
+          worker.on('error', (error: any) => {
+            console.error(`Lỗi từ worker cho ${userId}:`, error);
+            pool.release(worker);
+          });
+
+          await pool.drain();
+          await pool.clear();
+        }
       }
     }
   }

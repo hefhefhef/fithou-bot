@@ -12,10 +12,10 @@
     "outDir": "dist/",
     "rootDir": "src",
     "target": "es6",
-    "module": "commonjs",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "baseUrl": "./src"
   },
-  "include": ["./src"],
+  "include": ["src/**/*"],
   "exclude": ["dist", "node_modules/**"]
 }
