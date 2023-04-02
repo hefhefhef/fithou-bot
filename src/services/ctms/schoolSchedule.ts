@@ -31,9 +31,15 @@ export const schoolScheduleService = async (username: string, password: string) 
 
     if (login.isSuccess) {
       const date = formatDateTimeToGetTimetable();
-      console.log('date', date);
 
       const data = qs.stringify({
+        __EVENTTARGET: '',
+        __EVENTARGUMENT: '',
+        __VIEWSTATE:
+          '/wEPDwUKMTA4NDM3NDc2OGQYBwUzY3RsMDAkTGVmdENvbCRMaWNoaG9jMSRycHRyTGljaGhvYyRjdGwwNSRncnZMaWNoaG9jDzwrAAwBCAIBZAUzY3RsMDAkTGVmdENvbCRMaWNoaG9jMSRycHRyTGljaGhvYyRjdGwwMyRncnZMaWNoaG9jDzwrAAwBCGZkBTNjdGwwMCRMZWZ0Q29sJExpY2hob2MxJHJwdHJMaWNoaG9jJGN0bDAyJGdydkxpY2hob2MPPCsADAEIAgFkBTNjdGwwMCRMZWZ0Q29sJExpY2hob2MxJHJwdHJMaWNoaG9jJGN0bDA2JGdydkxpY2hob2MPPCsADAEIZmQFM2N0bDAwJExlZnRDb2wkTGljaGhvYzEkcnB0ckxpY2hob2MkY3RsMDEkZ3J2TGljaGhvYw88KwAMAQhmZAUzY3RsMDAkTGVmdENvbCRMaWNoaG9jMSRycHRyTGljaGhvYyRjdGwwNCRncnZMaWNoaG9jDzwrAAwBCGZkBTNjdGwwMCRMZWZ0Q29sJExpY2hob2MxJHJwdHJMaWNoaG9jJGN0bDAwJGdydkxpY2hob2MPPCsADAEIAgFkhO4CQTCT9FOotSw2ZoTf5gEBbXaed4Q4OAV5jtaoJYE=',
+        __VIEWSTATEGENERATOR: 'CB78C13A',
+        __EVENTVALIDATION:
+          '/wEdAAPwrTvSkjO6MxCyG5nv8RpLWWWHEhzFiGyQmAroNHRecPGp81KLC9U2/agHpgpfb4atL2GQMaATghjy+bylAXhJAkV++jXlveksbno26k3dtg==',
         ctl00$LeftCol$Lichhoc1$txtNgaydautuan: date,
         ctl00$LeftCol$Lichhoc1$btnXemlich: 'Xem+lịch',
       });
