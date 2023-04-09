@@ -53,6 +53,14 @@ export const morningSchedule = async () => {
 
         logger.warn(`User ${user.username} class this morning has been canceled! ${new Date()}`);
       }
+
+      if (sessionOne?.length > 0 && sessionOne[sessionOne?.length - 1] === 'Ngoại khoá') {
+        await sendMessage(user.subscribedID, {
+          text: message(`Bạn có một buổi học ngoại khoá`, sessionOne),
+        });
+
+        logger.warn(`User ${user.username} have an extra-curricular session! ${new Date()}`);
+      }
     }
   } catch (error) {
     logger.error(error);
@@ -100,6 +108,14 @@ export const noonSchedule = async () => {
         });
 
         logger.warn(`User ${user.username} class this afternoon has been canceled! ${new Date()}`);
+      }
+
+      if (sessionTwo?.length > 0 && sessionTwo[sessionTwo?.length - 1] === 'Ngoại khoá') {
+        await sendMessage(user.subscribedID, {
+          text: message(`Bạn có một buổi học ngoại khoá`, sessionTwo),
+        });
+
+        logger.warn(`User ${user.username} have an extra-curricular session! ${new Date()}`);
       }
     }
   } catch (error) {
@@ -149,6 +165,14 @@ export const eveningSchedule = async () => {
 
         logger.warn(`User ${user.username} class this evening has been canceled! ${new Date()}`);
 
+      }
+
+      if (sessionThree?.length > 0 && sessionThree[sessionThree?.length - 1] === 'Ngoại khoá') {
+        await sendMessage(user.subscribedID, {
+          text: message(`Bạn có một buổi học ngoại khoá`, sessionThree),
+        });
+
+        logger.warn(`User ${user.username} have an extra-curricular session! ${new Date()}`);
       }
     }
   } catch (error) {
