@@ -2,10 +2,10 @@ import { NextFunction, Request } from 'express';
 
 import { UserModel } from 'models';
 import * as ctmsService from 'services/ctms';
-import { logoutCtms } from 'services/ctms';
 import { ExamDay } from 'services/ctms/examDay';
 import { sendMessage } from 'services/facebook';
 import { removeCtmsUserByEmail } from '../users/service';
+import { logoutAndRemoveCookie } from '../cookies/service';
 
 export const login = async (username: string, password: string, id: string) => {
   const result = await ctmsService.loginCtms(username, password);
@@ -31,7 +31,7 @@ export const login = async (username: string, password: string, id: string) => {
       text: `CTMS BOT: Đăng nhập thành công! Bạn đã có thể  sử dụng các dịch vụ ctms bot cung cấp.`,
     });
 
-    logoutCtms(result.cookie);
+    logoutAndRemoveCookie(result.cookie, username);
   }
 
   if (result.isRemove) {

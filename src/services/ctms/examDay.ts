@@ -3,14 +3,15 @@ import * as cheerio from 'cheerio';
 
 import logger from 'logger';
 import { EXAM_DAY_URL, EXPIRED_CTMS } from 'utils/constants';
-import { loginCtms, logoutCtms } from 'services/ctms/auth';
+import { loginCtms } from 'services/ctms/auth';
 import { ExamDayResponse, ExamType } from 'types';
 import { removeCtmsUserByEmail } from 'api/v1/users/service';
+import { logoutAndRemoveCookie } from 'api/v1/cookies/service';
 
 export const ExamDay = async (username: string, password: string, id?: string) => {
   try {
     const login = await loginCtms(username, password);
-    const cookie = login.cookie.join('; ');
+    const cookie = login?.cookie;
 
     if (login.isSuccess) {
       const dom = await axios.get(EXAM_DAY_URL, {
@@ -52,7 +53,7 @@ export const ExamDay = async (username: string, password: string, id?: string) =
         });
       }
 
-      logoutCtms(login.cookie);
+      logoutAndRemoveCookie(login.cookie, username);
 
       const res: ExamDayResponse = {
         data: result,

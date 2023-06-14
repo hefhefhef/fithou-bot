@@ -4,16 +4,16 @@ import * as cheerio from 'cheerio';
 import config from 'config';
 import QueryString from 'qs';
 
-const getUserID = async (cookie: Array<string>): Promise<string> => {
+const getUserID = async (cookie: string): Promise<string> => {
   const response = await axios.get(`${config.service.ctms}/DangkyLoptinchi.aspx?sid=`, {
     headers: {
-      Cookie: cookie.join('; '),
+      Cookie: cookie,
     },
   });
   return response.data.split('"getmodule:" + ')[1].split(';')[0];
 };
 
-const getSubjects = async (cookie: Array<string>, userId: string) => {
+const getSubjects = async (cookie: string, userId: string) => {
   const response = await axios.post(
     `${config.service.ctms}/DangkyLoptinchi.aspx?sid=`,
     QueryString.stringify({
@@ -25,7 +25,7 @@ const getSubjects = async (cookie: Array<string>, userId: string) => {
     {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Cookie: cookie.join('; '),
+        Cookie: cookie,
       },
     }
   );

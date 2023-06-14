@@ -3,11 +3,12 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import qs from 'qs';
 
-import { loginCtms, logoutCtms } from 'services/ctms';
+import { loginCtms } from 'services/ctms';
 import { EXPIRED_CTMS, SCHOOL_SCHEDULE_URL, todayformatted } from 'utils/constants';
 import logger from 'logger';
 import { removeCtmsUserByEmail } from 'api/v1/users/service';
 import { formatDateTimeToGetTimetable } from 'utils';
+import { logoutAndRemoveCookie } from 'api/v1/cookies/service';
 
 const checkSession = (session: string) => {
   if (session.match('07:30')) {
@@ -27,7 +28,7 @@ export const schoolScheduleService = async (username: string, password: string) 
   try {
     const login = await loginCtms(username, password);
 
-    const cookie = login.cookie.join('; ');
+    const cookie = login.cookie;
 
     if (login.isSuccess) {
       const date = formatDateTimeToGetTimetable();
@@ -201,7 +202,7 @@ export const schoolScheduleService = async (username: string, password: string) 
         }
       });
 
-      logoutCtms(login.cookie);
+      logoutAndRemoveCookie(login.cookie, username);
 
       return list;
     }

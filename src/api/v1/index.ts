@@ -7,6 +7,7 @@ import schoolScheduleRouter from './schoolSchedule';
 import sendQuickRepliesRouter from './sendQuickReplies';
 import userRouter from './users';
 import examRouter from './exam';
+import cookieRouter from './cookies';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/school-schedule', schoolScheduleRouter);
 router.use('/send-quick-replies', sendQuickRepliesRouter);
 router.use('/users', userRouter);
 router.use('/exam', examRouter);
+router.use('/cookies', cookieRouter);
 
 export default router;

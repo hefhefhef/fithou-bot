@@ -5,9 +5,10 @@ import md5 from 'md5';
 import qs from 'qs';
 import cheerio from 'cheerio';
 import logger from 'logger';
+import { pushCookies } from 'api/v1/cookies/service';
 
 type LoginCtmsResponse = {
-  cookie: any;
+  cookie: string;
   isSuccess: boolean;
   isRemove: boolean;
   errorMsg: string;
@@ -48,14 +49,21 @@ const loginCtms = async (username: string, password: string) => {
 
     const response = await axios(configOfServer);
     const dom = cheerio.load(response.data)('#LeftCol_UserLogin1_lblMess');
+    console.log("response.headers['set-cookie']", response.headers['set-cookie'][0]);
+
+    const cookie = response.headers['set-cookie'][0];
+
+    // push cookie to db
+    pushCookies(cookie, username);
 
     return {
-      cookie: response.headers['set-cookie'],
+      cookie,
       isSuccess: !!response.data.includes('Xin chào mừng'),
       isRemove: !!response.data.includes('Sai Tên đăng nhập hoặc Mật khẩu'),
       errorMsg: dom.text(),
     } as LoginCtmsResponse;
   } catch (err) {
+    logger.error(`Error in loginCtms: ${JSON.stringify(err)}`);
     return {
       isSuccess: false,
       errorMsg: 'Lỗi kết nối',
@@ -63,7 +71,7 @@ const loginCtms = async (username: string, password: string) => {
   }
 };
 
-const logoutCtms = async (cookie: Array<string>) => {
+const logoutCtms = async (cookie: string) => {
   try {
     await axios.post(
       `${config.service.ctms}/login.aspx`,
@@ -76,14 +84,14 @@ const logoutCtms = async (cookie: Array<string>) => {
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          Cookie: cookie.join('; '),
+          Cookie: cookie,
         },
       }
     );
 
     logger.info('logout ctms success');
   } catch (e) {
-    console.log('logout errr:', e.message);
+    logger.error(`Error in logoutCtms: ${JSON.stringify(e)}`);
   }
 };
 

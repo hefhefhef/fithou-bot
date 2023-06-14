@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
 import logger from 'logger';
 import { ArticlesModel, UserModel } from 'models';
-import { convertHtmlToImage, deleteImage, getSubjects, getSubjectsInHTML, getUserID, logoutCtms } from 'services/ctms';
+import { convertHtmlToImage, deleteImage, getSubjects, getSubjectsInHTML, getUserID } from 'services/ctms';
 import config from '../../config';
 import { QUICK_REPLIES_TYPE } from './type';
+import { logoutAndRemoveCookie } from 'api/v1/cookies/service';
 const { default: axios } = require('axios');
 
 const sendMessage = async (id: string, message: any) => {
@@ -72,7 +73,7 @@ const removeCtmsAccount = async (id: string) => {
   }
 };
 
-const sendSubjectCtms = async (receiver: string | string[], cookie: Array<string>, username: string) => {
+const sendSubjectCtms = async (receiver: string | string[], cookie: string, username: string) => {
   try {
     const user = await UserModel.findOne({ username });
     if (typeof receiver === 'string' && user.subjectHTML !== '') {
@@ -102,7 +103,7 @@ const sendSubjectCtms = async (receiver: string | string[], cookie: Array<string
     const id = await getUserID(cookie);
     const subjects = await getSubjects(cookie, id);
     if (subjects === null || user.subjectHTML === subjects) {
-      logoutCtms(cookie);
+      logoutAndRemoveCookie(cookie, username);
       return;
     }
 
@@ -144,7 +145,7 @@ Bạn nên tắt tính năng này khi không cần dùng đến :D`,
     });
   } catch (e) {
   } finally {
-    await logoutCtms(cookie);
+    await logoutAndRemoveCookie(cookie, username);
   }
 };
 

@@ -3,5 +3,6 @@ export const define = {
   logout: '/logout',
   help: '/help',
   examday: '/examday',
-  un_examday: '/un_examday',
+  unExamday: '/un_examday',
+  forceLogout: '/force_logout',
 };

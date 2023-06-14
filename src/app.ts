@@ -17,15 +17,6 @@ import runjobs from 'jobs';
 const app = express();
 
 app.use(cors({ origin: '*' }));
-// app.use(
-//   helmet({
-//     contentSecurityPolicy: {
-//       directives: {
-//         'frame-ancestors': ["'self'", 'https://facebook.com', 'http://localhost:5500'],
-//       },
-//     },
-//   })
-// );
 
 app.use(bodyParser.json({ limit: '100mb' }));
 app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
