@@ -36,6 +36,11 @@ export default {
       minute: process.env.FITHOU_JOB_MINUTE || 30,
       second: process.env.FITHOU_JOB_SECOND,
     },
+    attendanceReminder: {
+      webHookUrl:
+        process.env.ATTENDANCE_REMINDER_WEBHOOK_URL ||
+        'https://chat.googleapis.com/v1/spaces/AAAAB1jAqx4/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=x6mJHCRxh5F5VCKo92MIElqUZ6yD4pEnhv6i6ZMq-Ik',
+    },
   },
   auth: {
     key: process.env.AUTH_KEY,

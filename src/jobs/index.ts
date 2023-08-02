@@ -1,5 +1,6 @@
 import logger from 'logger';
 import schedule from 'node-schedule';
+import { sendReminder } from './attendanceReminder';
 
 const rule = new schedule.RecurrenceRule();
 // your timezone
@@ -17,6 +18,9 @@ const runjobs = () => {
   schedule.scheduleJob('00 00 12 * * 0-6', noonSchedule);
   schedule.scheduleJob('00 30 16 * * 0-6', eveningSchedule);
   schedule.scheduleJob('00 00 20 * * 0-6', examDaySchedule);
+  schedule.scheduleJob('35 8 * * 1-5', sendReminder);
+  schedule.scheduleJob('5 18 * * 1-5', sendReminder);
+
   logger.info('All jobs are running');
 };
 
