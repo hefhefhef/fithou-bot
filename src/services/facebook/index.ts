@@ -177,7 +177,7 @@ const subCtmsSubject = async (id: string) => {
   }
 
   sendMessage(id, {
-    text: `CTMS BOT: Chức năng này đang được bảo trì.`,
+    text: `CTMS BOT: Chức năng này chỉ dành cho Admin. Nạp vjp đê`,
   });
   return;
 };
